@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 using BehaviourTree;
+using TMPro;
 
 public class EnemyWithHeadAI : IDamagable, IAttackable, ISplittable, IAgent
 {
@@ -25,6 +26,7 @@ public class EnemyWithHeadAI : IDamagable, IAttackable, ISplittable, IAgent
     public Vector3 position { get; set; }
     public Quaternion rotation { get; set; }
     public NavMeshAgent agent { get; set; }
+    public TextMeshPro NodeText { get; set; }
 
     GameObject deathParticlesGameObject;
 
@@ -35,6 +37,8 @@ public class EnemyWithHeadAI : IDamagable, IAttackable, ISplittable, IAgent
         body = _body;
         agent = body.GetComponent<NavMeshAgent>();
         collissionDetector = body.GetComponent<CollissionDetector>();
+        NodeText = body.GetComponentInChildren<TextMeshPro>();
+
 
         resultPrefabs = new GameObject[]
         {
@@ -46,7 +50,7 @@ public class EnemyWithHeadAI : IDamagable, IAttackable, ISplittable, IAgent
         player = BlackBoard.player;
 
         tree = new SuccessParallel(
-                    new LookForTarget(0, 20, 0.8f, body, player,
+                    new LookForTarget(0, 50, 0.8f, body, player,
                         //new Selector(
                         //    new LookForTarget(0, 10, 0.8f, body, player,
                         //        new Sequence(
@@ -56,16 +60,22 @@ public class EnemyWithHeadAI : IDamagable, IAttackable, ISplittable, IAgent
                         //            )
                         //        ),
                             new LookForTarget(0, 50, 0.8f, body, player,
-                                new Split(this, resultPrefabs)
+                                new Sequence(
+                                    new DisplayText(NodeText, "Splitting"),
+                                    new Split(this, resultPrefabs)
+                                    )
                                 )
                            //)
                         ),
                     new Interruptor(new LookForTarget(0, 50, 0.8f, body, player),
-                        new Sequence(
-                            new MoveToTarget(this, patrolPath)
-                        )),
+                            new Sequence(
+                                new DisplayText(NodeText, "Patrolling"),
+                                new MoveToTarget(this, patrolPath)
+                            )
+                        ),
                     new CheckCollission(this,
                         new Sequence(
+                            new DisplayText(NodeText, "I've Been hit"),
                             new BasicSpawnPrefab(deathParticlesGameObject, body, new Quaternion(0, 0, 0, 0)),
                             new KillSpawnable(this)
                             )

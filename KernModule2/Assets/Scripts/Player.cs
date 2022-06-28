@@ -33,7 +33,6 @@ public class Player : MonoBehaviour, ITargetable, IDamagable, IGrabbable
 
     public float grabRange { get; set; } = 4f;
     public int Health { get; set; } = 1;
-    int healthLastFrame = 100;
 
     Vector3 playerVelocity;
     float FOV = 1f;
@@ -57,12 +56,6 @@ public class Player : MonoBehaviour, ITargetable, IDamagable, IGrabbable
 
         MoveCamera();
         MovePlayer();
-
-        if (healthLastFrame != Health)
-        {
-            Debug.Log("Playerhealth is now" + Health);
-        }
-        healthLastFrame = Health;
 
         if (Input.GetMouseButtonDown(1))
         {
@@ -131,7 +124,6 @@ public class Player : MonoBehaviour, ITargetable, IDamagable, IGrabbable
 
     void PickUpObject()
     {
-        Debug.Log("grabbing");
         if(currentlyHeldThrowable != null)
         {
             return;

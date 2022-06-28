@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 using BehaviourTree;
+using TMPro;
 
 public class EnemyBody : IDamagable, IAttackable, IMergeable, IAgent, IGrabbable, IListener
 {
@@ -47,6 +48,8 @@ public class EnemyBody : IDamagable, IAttackable, IMergeable, IAgent, IGrabbable
     public Vector3 position { get; set; }
     public Quaternion rotation { get; set; }
 
+    public TextMeshPro NodeText { get; set; }
+
     GameObject deathParticlesGameObject;
 
     Node tree;
@@ -56,6 +59,7 @@ public class EnemyBody : IDamagable, IAttackable, IMergeable, IAgent, IGrabbable
         body = _body;
         collissionDetector = body.GetComponent<CollissionDetector>();
         agent = body.GetComponent<NavMeshAgent>();
+        NodeText = body.GetComponentInChildren<TextMeshPro>();
 
         player = BlackBoard.player;
 
@@ -64,42 +68,45 @@ public class EnemyBody : IDamagable, IAttackable, IMergeable, IAgent, IGrabbable
 
         tree =  new SuccessParallel(
                     new Selector(
-                            new ListenForSound(this,
+                        new ListenForSound(this,
                             new Sequence(
+                                new DisplayText(NodeText, "Hearing Sound"),
                                 new MoveToNearestThrowable(this, this),
                                 new Pickup(this),
                                 new CheckThrowableType(this, typeof(EnemyHead),
                                     new Merge(this, this, typeof(EnemyHead)))
-                                    )
+                                )
                             ),
-                            new LookForThrowable(this, grabRange, 0.8f,
-                                new Sequence(
-                                    new MoveToNearestThrowable(this, this),
-                                    new Pickup(this),
-                                    new Aim(this, player),
-                                    new WaitNode(1f),
-                                    new Throw(this, player),
-                                    new WaitNode(1f)
-                                    )
-                                ),
+                        new LookForThrowable(this, grabRange, 0.8f,
+                            new Sequence(
+                                new DisplayText(NodeText,"Throwing"),
+                                new MoveToNearestThrowable(this, this),
+                                new Pickup(this),
+                                new Aim(this, player),
+                                new WaitNode(1f),
+                                new Throw(this, player),
+                                new WaitNode(1f)
+                                )
+                            ),
                         new Interruptor(new ListenForSound(this), 
-                            new Selector(
-                                new LookForTarget(0, 50, 0.8f, body, player,
-                                    new Sequence(
-                                        new MoveToTarget(this, player),
-                                        new Attack(this, player)
-                                        )
-                                    ),
+                            //new Selector(
+                            //    new LookForTarget(0, 50, 0.8f, body, player,
+                            //        new Sequence(
+                            //            new MoveToTarget(this, player),
+                            //            new Attack(this, player)
+                            //            )
+                            //        ),
                                 new Interruptor(new LookForTarget(0, 50, 0.8f, body, player),
                                     new Sequence(
+                                        new DisplayText(NodeText, "Random Walking"),
                                         new RandomlyWalk(this)
                                         )
                                     )
-                                )
                             )
                         ),
                     new CheckCollission(this,
                         new Sequence(
+                            new DisplayText(NodeText, "I've Been hit"),
                             new BasicSpawnPrefab(deathParticlesGameObject, body, new Quaternion(0,0,0,0)),
                             new Drop(this),
                             new KillSpawnable(this)
@@ -121,4 +128,5 @@ public class EnemyBody : IDamagable, IAttackable, IMergeable, IAgent, IGrabbable
         tree.Run();
         return true;
     }
+
 }

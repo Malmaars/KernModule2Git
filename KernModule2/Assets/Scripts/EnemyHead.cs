@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using BehaviourTree;
+using TMPro;
 
 public class EnemyHead : IMergeable, IThrowable, IAudible
 {
@@ -23,6 +24,8 @@ public class EnemyHead : IMergeable, IThrowable, IAudible
 
     public float soundRange {get;set; }
     public bool makingSound { get; set; }
+    public TextMeshPro NodeText { get; set; }
+
 
     ParticleSystem screamParticles;
 
@@ -34,28 +37,33 @@ public class EnemyHead : IMergeable, IThrowable, IAudible
         rb = body.GetComponent<Rigidbody>();
         collissionDetector = body.GetComponent<CollissionDetector>();
         player = BlackBoard.player;
+        NodeText = body.GetComponentInChildren<TextMeshPro>();
 
         resultPrefab = Resources.Load("EnemyModels/RiggedSkeleton") as GameObject;
         BlackBoard.AddSpawnable(this);
         BlackBoard.AddThrowable(this);
         screamParticles = body.GetComponentInChildren<ParticleSystem>();
-        Debug.Log(screamParticles);
         //screamParticles.Play();
 
-        tree = new Selector(
-                    new Interruptor(new CheckIfHeld(this, true),
-                        new Sequence(
-                            new WaitNode(6f),
-                            new MakeASound(this),
-                            new PlayParticleSystem(screamParticles),
-                            new WaitNode(6f),
-                            new StopParticleSystem(screamParticles),
-                            new StopMakingASound(this)
-                            ),
+        tree =  new Interruptor(new CheckIfHeld(this, true),
+                    new Sequence(
+                        new DisplayText(NodeText, "Waiting"),
+                        new WaitNode(6f),
+                        new DisplayText(NodeText, "Screaming"),
+                        new MakeASound(this),
+                        new PlayParticleSystem(screamParticles),
+                        new WaitNode(6f),
+                        new DisplayText(NodeText, "Waiting"),
+                        new StopParticleSystem(screamParticles),
+                        new StopMakingASound(this)
+                        ),
+                    new Sequence(
+                        new DisplayText(NodeText, "Being Held"),
                         new StopParticleSystem(screamParticles),
                         new StopMakingASound(this)
                         )
                     );
+                    
     }
 
     public bool LogicUpdate()

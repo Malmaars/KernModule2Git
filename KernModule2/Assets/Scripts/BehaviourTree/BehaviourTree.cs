@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
+using TMPro;
 
 namespace BehaviourTree
 {
@@ -14,6 +15,8 @@ namespace BehaviourTree
         //Every Node also needs to be able to run
         public abstract Result Run();
     }
+
+
 
     //Selector
     public class Selector : Node
@@ -192,10 +195,10 @@ namespace BehaviourTree
             child = _child;
         }
 
-        Node[] actionsUponExit;
+        Node actionsUponExit;
 
         //Interruptor version that performs specific action(s) when interrupting
-        public Interruptor(ConditionalNode _condition, Node _child, params Node[] _actionsUponExit)
+        public Interruptor(ConditionalNode _condition, Node _child, Node _actionsUponExit)
         {
             condition = _condition;
             child = _child;
@@ -210,10 +213,8 @@ namespace BehaviourTree
             {
                 if (actionsUponExit != null)
                 {
-                    foreach (Node action in actionsUponExit)
-                    {
-                        action.Run();
-                    }
+                    actionsUponExit.Run();
+                    
                 }
                 return Result.failed;
             }
@@ -536,7 +537,7 @@ namespace BehaviourTree
             IAudible closestAudible = null;
             for(int i = 0; i < BlackBoard.currentSounds.Count; i++)
             {
-                if(BlackBoard.currentSounds[i] == null)
+                if(BlackBoard.currentSounds[i] == null || listener.body == null)
                 {
                     break;
                 }
@@ -580,7 +581,6 @@ namespace BehaviourTree
 
         public override Result Run()
         {
-            Debug.Log("checkthrowable is running");
             throwable = grabbable.currentlyHeldThrowable;
 
             if (throwable.GetType() != type)
@@ -624,8 +624,6 @@ namespace BehaviourTree
 
                 return Result.failed;
             }
-
-            Debug.Log("COLLISSION DETECTED");
 
             if (child != null)
             {
@@ -744,7 +742,7 @@ namespace BehaviourTree
                 return Result.failed;
             }
 
-            if (Vector3.Distance(actor.transform.position, vectorTarget) < 0.1f)
+            if (Vector3.Distance(actor.transform.position, vectorTarget) < 1f)
             {
                 currentIndex++;
                 if(points != null && currentIndex >= points.Length)
@@ -787,7 +785,8 @@ namespace BehaviourTree
                 return Result.failed;
             }
             SetPath();
-            if (actor == null || actor.path.status == NavMeshPathStatus.PathInvalid)
+
+            if (actor == null || actor.path.status == NavMeshPathStatus.PathInvalid || target == null)
             {
                 return Result.failed;
             }
@@ -1046,14 +1045,11 @@ namespace BehaviourTree
             toThrow.rb.isKinematic = false;
 
             Vector3 direction =  (target.body.transform.position - grabbed.body.transform.position).normalized;
-            Debug.Log(direction * grabbed.throwStrength);
             toThrow.rb.AddForce(direction * grabbed.throwStrength, ForceMode.Impulse);
-            //Debug.Log(toThrow.rb.velocity);
-            grabbed.currentlyHeldThrowable = null;
             toThrow.isBeingHeld = false;
             grabbed.isThrowing = false;
+            grabbed.currentlyHeldThrowable = null;
 
-            Debug.Log("THROW");
             return Result.success;
         }
     }
@@ -1125,11 +1121,9 @@ namespace BehaviourTree
         {
             if (grabbable.currentlyHeldThrowable != null && grabbable.currentlyHeldThrowable.GetType() == mergeType)
             {
-                Debug.Log("Making new Ithrowable Array");
                 mergeables = new IMergeable[] { firstMergeable, grabbable as IMergeable };
             }
 
-            Debug.Log(mergeables.Length);
             if(mergeables == null || mergeables.Length <= 1)
             {
                 return Result.failed;
@@ -1142,8 +1136,6 @@ namespace BehaviourTree
                     return Result.failed;
                 }
             }
-
-            Debug.Log("MERGE");
 
             GameObject newBody = Object.Instantiate(mergeables[0].resultPrefab, mergeables[0].body.transform.position, mergeables[0].body.transform.rotation);
 
@@ -1223,6 +1215,23 @@ namespace BehaviourTree
         }
     }
 
+    public class DisplayText : Node
+    {
+        TextMeshPro editText;
+        string textToDisplay;
+        public DisplayText(TextMeshPro _editText, string _textToDisplay)
+        {
+            editText = _editText;
+            textToDisplay = _textToDisplay;
+        }
+
+        public override Result Run()
+        {
+            editText.text = textToDisplay;
+            return Result.success;
+        }
+    }
+
     public class PlaySoundFile : Node
     {
         public PlaySoundFile()
@@ -1259,6 +1268,7 @@ namespace BehaviourTree
         }
         public override Result Run()
         {
+            Debug.Log("Stop particles");
             particles.Stop();
             return Result.success;
         }

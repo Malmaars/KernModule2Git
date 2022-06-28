@@ -27,8 +27,6 @@ public class KillCounterAdder : MonoBehaviour
     {
         int digit1 = kills / 10;
         int digit2 = kills % 10;
-        Debug.Log(digit1);
-        Debug.Log(digit2);
 
         GameObject temp = Instantiate(numberPrefabs[digit1], UINumbers[0].transform.position, UINumbers[0].transform.rotation, UINumbers[0].transform.parent);
         Destroy(UINumbers[0]);
