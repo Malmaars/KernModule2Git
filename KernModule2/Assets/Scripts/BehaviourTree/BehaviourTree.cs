@@ -537,7 +537,7 @@ namespace BehaviourTree
             IAudible closestAudible = null;
             for(int i = 0; i < BlackBoard.currentSounds.Count; i++)
             {
-                if(BlackBoard.currentSounds[i] == null || listener.body == null)
+                if(BlackBoard.currentSounds[i] == null || listener.body == null || BlackBoard.currentSounds[i].body == null)
                 {
                     break;
                 }
@@ -960,7 +960,7 @@ namespace BehaviourTree
 
             pickedUp = grabbing.nearestThrowable;
 
-            if (pickedUp.isBeingHeld)
+            if (pickedUp.isBeingHeld || pickedUp.rb.velocity.magnitude > 3)
             {
                 return Result.failed;
             }
