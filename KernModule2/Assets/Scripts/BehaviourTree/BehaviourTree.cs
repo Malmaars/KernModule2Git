@@ -771,11 +771,18 @@ namespace BehaviourTree
             grabbable = _grabbable;
         }
 
-        public void SetPath()
+        public Result SetPath()
         {
             target = grabbable.nearestThrowable;
+
+            if(target == null)
+            {
+                return Result.failed;
+            }
             vectorTarget = target.body.transform.position;
             actor.SetDestination(vectorTarget);
+
+            return Result.success;
         }
 
         public override Result Run()
@@ -784,9 +791,10 @@ namespace BehaviourTree
             {
                 return Result.failed;
             }
-            SetPath();
 
-            if (actor == null || actor.path.status == NavMeshPathStatus.PathInvalid || target == null)
+            Result pathResult = SetPath();
+
+            if (pathResult == Result.failed || actor == null || actor.path.status == NavMeshPathStatus.PathInvalid || target == null)
             {
                 return Result.failed;
             }
