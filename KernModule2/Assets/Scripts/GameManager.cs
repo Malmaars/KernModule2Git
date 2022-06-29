@@ -74,9 +74,9 @@ public class GameManager : MonoBehaviour
             enemySpawner.spawnAgent();
         }
 
+        SwitchUIModes();
         player.LogicUpdate();
         killAdder.CounterUpdate();
-        SwitchUIModes();
         //RegulateParticles();
     }
 

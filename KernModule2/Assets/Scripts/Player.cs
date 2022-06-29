@@ -181,7 +181,7 @@ public class Player : MonoBehaviour, ITargetable, IDamagable, IGrabbable
         toThrow.body.transform.SetParent(null);
         toThrow.rb.isKinematic = false;
 
-        Vector3 direction = playerCamera.transform.forward;
+        Vector3 direction = (playerCamera.transform.forward * 10 - playerCamera.transform.right).normalized;
         toThrow.rb.AddForce(direction * throwStrength, ForceMode.Impulse);
         currentlyHeldThrowable = null;
         toThrow.isBeingHeld = false;

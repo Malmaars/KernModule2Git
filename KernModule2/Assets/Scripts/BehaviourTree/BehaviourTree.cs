@@ -491,6 +491,11 @@ namespace BehaviourTree
 
             for(int i = 0; i < BlackBoard.throwables.Count; i++)
             {
+                if(BlackBoard.throwables[i] == null || toGrab == null || BlackBoard.throwables[i].body == null || toGrab.body == null)
+                {
+                    break;
+                }
+
                 float dotProduct = Vector3.Dot(toGrab.body.transform.forward, (BlackBoard.throwables[i].body.transform.position).normalized);
                 float distanceFromObject = Vector3.Distance(toGrab.body.transform.position, BlackBoard.throwables[i].body.transform.position);
 
@@ -617,7 +622,7 @@ namespace BehaviourTree
 
         public override Result Run()
         {
-            if(!damagable.collissionDetector.collisionBool || damagable.collissionDetector.collisionSpeed < 5)
+            if(!damagable.collissionDetector.collisionBool || damagable.collissionDetector.collisionSpeed < 3)
             {
                 //if (damagable.collissionDetector.collisionBool)
                   //  Debug.Log(damagable.collissionDetector.collisionSpeed);
