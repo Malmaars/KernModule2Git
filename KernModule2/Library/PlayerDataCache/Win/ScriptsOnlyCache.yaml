@@ -930,4 +930,4 @@ ScriptsOnlyBuild:
   scenePathNames:
   - Assets/Scenes/MainMenu.unity
   - Assets/Scenes/MainLevel.unity
-  playerPath: C:/Users/simon/Documents/GitHub/GameDevAI/HeadOff/KernModule2.exe
+  playerPath: C:/Users/simon/Documents/GitHub/GameDevAI/HeadOffDevBuild/KernModule2.exe

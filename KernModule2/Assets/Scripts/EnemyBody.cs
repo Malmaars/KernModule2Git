@@ -59,7 +59,7 @@ public class EnemyBody : IDamagable, IAttackable, IMergeable, IAgent, IGrabbable
         body = _body;
         collissionDetector = body.GetComponent<CollissionDetector>();
         agent = body.GetComponent<NavMeshAgent>();
-        //NodeText = body.GetComponentInChildren<TextMeshPro>();
+        NodeText = body.GetComponentInChildren<TextMeshPro>();
 
         player = BlackBoard.player;
 
@@ -70,7 +70,7 @@ public class EnemyBody : IDamagable, IAttackable, IMergeable, IAgent, IGrabbable
                     new Selector(
                         new ListenForSound(this,
                             new Sequence(
-                                //new DisplayText(NodeText, "Hearing Sound"),
+                                new DisplayText(NodeText, "Hearing Sound"),
                                 new MoveToNearestThrowable(this, this),
                                 new Pickup(this),
                                 new CheckThrowableType(this, typeof(EnemyHead),
@@ -79,7 +79,7 @@ public class EnemyBody : IDamagable, IAttackable, IMergeable, IAgent, IGrabbable
                             ),
                         new LookForThrowable(this, grabRange, 0.8f,
                             new Sequence(
-                                //new DisplayText(NodeText,"Throwing"),
+                                new DisplayText(NodeText,"Throwing"),
                                 new MoveToNearestThrowable(this, this),
                                 new Pickup(this),
                                 new Aim(this, player),
@@ -98,7 +98,7 @@ public class EnemyBody : IDamagable, IAttackable, IMergeable, IAgent, IGrabbable
                             //        ),
                                 new Interruptor(new LookForTarget(0, 50, 0.8f, body, player),
                                     new Sequence(
-                                        //new DisplayText(NodeText, "Random Walking"),
+                                        new DisplayText(NodeText, "Random Walking"),
                                         new RandomlyWalk(this)
                                         )
                                     )
@@ -112,7 +112,7 @@ public class EnemyBody : IDamagable, IAttackable, IMergeable, IAgent, IGrabbable
                         ),
                     new CheckCollission(this,
                         new Sequence(
-                            //new DisplayText(NodeText, "I've Been hit"),
+                            new DisplayText(NodeText, "I've Been hit"),
                             new BasicSpawnPrefab(deathParticlesGameObject, body, new Quaternion(0,0,0,0)),
                             new Drop(this),
                             new KillSpawnable(this)

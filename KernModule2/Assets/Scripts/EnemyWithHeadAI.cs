@@ -37,7 +37,7 @@ public class EnemyWithHeadAI : IDamagable, IAttackable, ISplittable, IAgent
         body = _body;
         agent = body.GetComponent<NavMeshAgent>();
         collissionDetector = body.GetComponent<CollissionDetector>();
-        //NodeText = body.GetComponentInChildren<TextMeshPro>();
+        NodeText = body.GetComponentInChildren<TextMeshPro>();
 
 
         resultPrefabs = new GameObject[]
@@ -61,7 +61,7 @@ public class EnemyWithHeadAI : IDamagable, IAttackable, ISplittable, IAgent
                         //        ),
                             new LookForTarget(0, 50, 0.8f, body, player,
                                 new Sequence(
-                                    //new DisplayText(NodeText, "Splitting"),
+                                    new DisplayText(NodeText, "Splitting"),
                                     new Split(this, resultPrefabs)
                                     )
                                 )
@@ -69,13 +69,13 @@ public class EnemyWithHeadAI : IDamagable, IAttackable, ISplittable, IAgent
                         ),
                     new Interruptor(new LookForTarget(0, 50, 0.8f, body, player),
                             new Sequence(
-                               // new DisplayText(NodeText, "Patrolling"),
+                                new DisplayText(NodeText, "Patrolling"),
                                 new MoveToTarget(this, patrolPath)
                             )
                         ),
                     new CheckCollission(this,
                         new Sequence(
-                           // new DisplayText(NodeText, "I've Been hit"),
+                            new DisplayText(NodeText, "I've Been hit"),
                             new BasicSpawnPrefab(deathParticlesGameObject, body, new Quaternion(0, 0, 0, 0)),
                             new KillSpawnable(this)
                             )

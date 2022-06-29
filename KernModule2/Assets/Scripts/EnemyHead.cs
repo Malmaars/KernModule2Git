@@ -37,7 +37,7 @@ public class EnemyHead : IMergeable, IThrowable, IAudible
         rb = body.GetComponent<Rigidbody>();
         collissionDetector = body.GetComponent<CollissionDetector>();
         player = BlackBoard.player;
-        //NodeText = body.GetComponentInChildren<TextMeshPro>();
+        NodeText = body.GetComponentInChildren<TextMeshPro>();
 
         resultPrefab = Resources.Load("EnemyModels/RiggedSkeleton") as GameObject;
         BlackBoard.AddSpawnable(this);
@@ -47,18 +47,18 @@ public class EnemyHead : IMergeable, IThrowable, IAudible
 
         tree =  new Interruptor(new CheckIfHeld(this, true),
                     new Sequence(
-                        //new DisplayText(NodeText, "Waiting"),
+                        new DisplayText(NodeText, "Waiting"),
                         new WaitNode(6f),
-                        //new DisplayText(NodeText, "Screaming"),
+                        new DisplayText(NodeText, "Screaming"),
                         new MakeASound(this),
                         new PlayParticleSystem(screamParticles),
                         new WaitNode(6f),
-                        //new DisplayText(NodeText, "Waiting"),
+                        new DisplayText(NodeText, "Waiting"),
                         new StopParticleSystem(screamParticles),
                         new StopMakingASound(this)
                         ),
                     new Sequence(
-                        //new DisplayText(NodeText, "Being Held"),
+                        new DisplayText(NodeText, "Being Held"),
                         new StopParticleSystem(screamParticles),
                         new StopMakingASound(this)
                         )
