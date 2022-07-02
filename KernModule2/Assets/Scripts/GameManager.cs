@@ -15,7 +15,7 @@ public class GameManager : MonoBehaviour
     GameObject[] numberPrefabs;
     
     [SerializeField]
-    GameObject[] UINumbers;
+    GameObject[] UINumbers, DefeatNumbers;
 
     [SerializeField]
     GameObject[] UIModes;
@@ -25,7 +25,7 @@ public class GameManager : MonoBehaviour
 
     Player player;
     EnemySpawner enemySpawner;
-    KillCounterAdder killAdder;
+    KillCounterAdder killAdder, defeatKillAdder;
     int currentUIMode = 0;
 
     // Start is called before the first frame update
@@ -99,6 +99,8 @@ public class GameManager : MonoBehaviour
     {
         if(player.Health <= 0)
         {
+            defeatKillAdder = new KillCounterAdder(numberPrefabs, DefeatNumbers);
+            defeatKillAdder.CounterUpdate();
             currentUIMode = 3;
             UIModes[0].SetActive(false);
             UIModes[1].SetActive(false);
@@ -119,15 +121,9 @@ public class GameManager : MonoBehaviour
             UIModes[2].SetActive(true);
         }
 
-        if(currentUIMode == 2 && player.Health <= 0)
-        {
-            currentUIMode++;
-            UIModes[3].SetActive(false);
-            UIModes[4].SetActive(true);
-        }
-
         if(currentUIMode == 3 && Input.GetMouseButtonDown(0))
         {
+            BlackBoard.UpdateHighScore();
             BlackBoard.ClearEverything();
             SceneManager.LoadScene(0);
         }

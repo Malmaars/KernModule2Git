@@ -7,6 +7,7 @@ public static class BlackBoard
     //reference to the player, there is only one player at a time
     public static Player player { get; private set; }
 
+    public static int highScore { get; private set; }
     public static int killCount { get; private set; }
 
     //List of all the spawned things in the scene
@@ -31,9 +32,14 @@ public static class BlackBoard
     public static void AddSound(IAudible audible) { currentSounds.Add(audible); }
     public static void RemoveSound(IAudible audible) { currentSounds.Remove(audible); }
 
-    public static void AddKill()
+    public static void AddKill() { killCount++; }
+
+    public static void UpdateHighScore()
     {
-        killCount++;
+        if(killCount > highScore)
+        {
+            highScore = killCount;
+        }
     }
 
     public static void ClearEverything()

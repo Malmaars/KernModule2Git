@@ -1240,6 +1240,11 @@ namespace BehaviourTree
 
         public override Result Run()
         {
+            if(editText == null)
+            {
+                //this way I can easily switch it on and off
+                return Result.success;
+            }
             editText.text = textToDisplay;
             return Result.success;
         }
